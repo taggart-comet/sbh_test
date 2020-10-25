@@ -1,0 +1,7 @@
+<phpunit bootstrap="./bootstrap.php">
+	<testsuites>
+		<testsuite name="main">
+			<file>integration/IntTestSave.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

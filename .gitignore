@@ -1,0 +1,11 @@
+.DS_Store
+.idea
+/.idea/
+/logs/*.log
+/logs/*/*.log
+
+/private/access.php
+/private/control.php
+
+/modules/vendor/
+/files/*

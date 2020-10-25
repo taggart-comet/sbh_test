@@ -1,0 +1,8 @@
+<phpunit bootstrap="../init.php">
+	<testsuites>
+		<testsuite name="main">
+			<file>tests/PhpMyOrmUnitTestWithFilters.php</file>
+			<file>tests/PhpMyOrmUnitTestPrimary.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

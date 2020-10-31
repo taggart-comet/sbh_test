@@ -2,6 +2,7 @@
 
 use Api\System\Storage;
 use PHPUnit\Framework\TestCase;
+use Ttask\Infrastructure\Persistence\PhpMyOrm\ArticleMain;
 
 // ../modules/vendor/bin/phpunit --testsuite main
 class IntTestSave extends TestCase
@@ -9,60 +10,27 @@ class IntTestSave extends TestCase
 
     const API_URL = 'https://sbhtest.local/api/v1/';
 
-    protected $_article       = [
+    protected array $_article       = [
           'title'       => 'Test Title',
           'author_name' => 'Test author',
           'text'        => 'Test Test',
-          'type'        => 0,
     ];
-    protected $_ids_to_delete = [];
+    protected array $_articles_to_delete = [];
 
     /** @test */
-    // ../modules/vendor/bin/phpunit --filter saveMysql integration/IntTestSave.php
-    public function saveMysql()
+    // ∞
+    public function saveTest()
     {
 
         // создаем новую статью
-        $response = $this->_save(\Api\System\Storage::TYPE_MYSQL);
-
-        self::assertTrue(isset($response['id']));
-        $this->_ids_to_delete[$response['id']] = \Api\System\Storage::TYPE_MYSQL;
+        $article_title = md5(mt_rand(0, time()));
+        self::assertTrue($this->_save(null, $article_title));
 
         // проверяем что создалась
-        $get = $this->_get($response['id']);
-        self::assertTrue(isset($get['title']));
-    }
+        self::assertTrue($this->_isExists($article_title));
 
-    /** @test */
-    // ../modules/vendor/bin/phpunit --filter saveFile integration/IntTestSave.php
-    public function saveFile()
-    {
-
-        // создаем новую статью
-        $response = $this->_save(\Api\System\Storage::TYPE_FILE);
-
-        self::assertTrue(isset($response['id']));
-        $this->_ids_to_delete[$response['id']] = \Api\System\Storage::TYPE_FILE;
-
-        // проверяем что создалась
-        $response = $this->_get($response['id']);
-        self::assertTrue(isset($response['title']));
-    }
-
-    /** @test */
-    // ../modules/vendor/bin/phpunit --filter saveRedis integration/IntTestSave.php
-    public function saveRedis()
-    {
-
-        // создаем новую статью
-        $response = $this->_save(\Api\System\Storage::TYPE_REDIS);
-
-        self::assertTrue(isset($response['id']));
-        $this->_ids_to_delete[$response['id']] = \Api\System\Storage::TYPE_REDIS;
-
-        // проверяем что создалась
-        $response = $this->_get($response['id']);
-        self::assertTrue(isset($response['title']));
+        //
+        $this->_articles_to_delete[] = $article_title;
     }
 
     /** @test */
@@ -74,36 +42,34 @@ class IntTestSave extends TestCase
 
         // создаем статью с одним автором 2 раза
         for ($i = 0; $i < 2; $i++) {
-            $response = $this->_save(\Api\System\Storage::TYPE_REDIS, $author);
-
-            self::assertTrue(isset($response['id']));
-            $this->_ids_to_delete[$response['id']] = \Api\System\Storage::TYPE_REDIS;
+            $article_title = md5(mt_rand(0, time()));
+            self::assertTrue($this->_save($author, $article_title));
+            $this->_articles_to_delete[] = $article_title;
         }
 
         // пробуем создать третий раз и проверяем что не дает
-        $response = $this->_save(\Api\System\Storage::TYPE_REDIS, $author);
-
-        self::assertTrue(isset($response['error_code']));
+        $article_title = md5(mt_rand(0, time()));
+        self::assertFalse($this->_save($author, $article_title));
+        $this->_articles_to_delete[] = $article_title;
     }
 
     // удаляем все что насоздавали
     protected function tearDown()
     {
 
-        foreach ($this->_ids_to_delete as $id => $storage_type) {
-            Storage::delete($id, $storage_type);
-            unset($this->_ids_to_delete[$id]);
+        foreach ($this->_articles_to_delete as $article_title) {
+            ArticleMain::objects()->filter_primary(md5($article_title))->delete();
         }
+
+        $this->_articles_to_delete = [];
     }
 
     // -------------------------------------------------------
     // Utils
     // -------------------------------------------------------
 
-    protected function _save(int $type, string $author = null):array
+    protected function _save(string $author = null, string $title = null):bool
     {
-
-        $this->_article['type'] = $type;
 
         // рандомим автора чтобы не блокировало
         if (is_null($author)) {
@@ -112,13 +78,36 @@ class IntTestSave extends TestCase
             $this->_article['author_name'] = $author;
         }
 
-        return self::_makeRequest(self::API_URL . 'article/save', 'POST', $this->_article);
+        //
+        if (!is_null($title)) {
+            $this->_article['title'] = $title;
+        }
+
+        $response = self::_makeRequest(self::API_URL . 'article/save', 'PUT', $this->_article);
+
+        if (isset($response['status']) && $response['status'] == 'ok') {
+            return true;
+        }
+
+        return false;
     }
 
-    protected function _get(int $id):array
+    protected function _isExists(string $article_title):bool
     {
 
-        return self::_makeRequest(self::API_URL . 'article/' . $id . '/get', 'GET');
+        $response = self::_makeRequest(self::API_URL . 'article/list', 'GET');
+
+        if (!isset($response['response']['list'])) {
+            return false;
+        }
+
+        foreach ($response['response']['list'] as $article) {
+            if ($article['title'] == $article_title) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected static function _makeRequest(string $url, string $type, array $params = null):array
@@ -141,6 +130,6 @@ class IntTestSave extends TestCase
             $response = [];
         }
 
-        return $response['response'] ?? $response;
+        return $response;
     }
 }

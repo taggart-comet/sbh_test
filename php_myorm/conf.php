@@ -32,12 +32,8 @@ return [
     // defining models
       'MODEL_CLASSES' => [
 
-            // System
-          '\\Api\\Models\\Storage\\StorageMeta',
-          '\\Api\\Models\\Storage\\StorageMysql',
-
-            // Blog
-          '\\Api\\Models\\Blog\\AuthorInfo',
+          'Ttask\\Infrastructure\\Persistence\\PhpMyOrm\\ArticleMain',
+          'Ttask\\Infrastructure\\Persistence\\PhpMyOrm\\AuthorMain',
 
       ],
 

@@ -21,7 +21,7 @@ class MigrateManager
     const WARNING = 2;
     const ERROR   = 3;
 
-    protected $enabled_models = [];
+    protected array $enabled_models = [];
 
     public function __construct()
     {

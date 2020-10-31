@@ -16,7 +16,7 @@ class PhpMyOrmUnitTestPrimary extends TestCase
 {
 
     /** @var TestModel $testing_model */
-    public $testing_model = 'PhpMyOrm\test\TestModel';
+    public string $testing_model = 'PhpMyOrm\test\TestModel';
     //	public $testing_model = 'PhpMyOrm\test\TestModelAuto';
     //		public $testing_model = 'PhpMyOrm\test\TestModelMultiPrimary';
 

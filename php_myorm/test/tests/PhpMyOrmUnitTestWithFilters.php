@@ -16,7 +16,7 @@ class PhpMyOrmUnitTestWithFilters extends TestCase
 {
 
     /** @var Model $testing_model */
-    public $testing_model = 'PhpMyOrm\test\TestModel';
+    public string $testing_model = 'PhpMyOrm\test\TestModel';
 
     /** @test */
     // ../modules/vendor/bin/phpunit --filter getOne tests/PhpMyOrmUnitTestWithFilters

@@ -79,10 +79,10 @@ class QueryBuilder
     public static function count(string $table_name, array $where_set):array
     {
 
-        $from_where_part = self::_getFromWherePart(
-              $table_name, $where_set, 0, 1);
+        $from_where_part = self::_getFromWherePart($table_name, $where_set);
+        $limit_offset_part = self::_getLimitOffsetPart(0, 1);
 
-        $query = "SELECT COUNT(*) as `" . self::COUNT_NAME . "` " . $from_where_part['part'];
+        $query = "SELECT COUNT(*) as `" . self::COUNT_NAME . "` " . $from_where_part['part'] . ' ' . $limit_offset_part;
 
         return [
               'query' => $query,
@@ -116,9 +116,11 @@ class QueryBuilder
     {
 
         $from_where_part = self::_getFromWherePart(
-              $table_name, $where_set, 0, $limit);
+              $table_name, $where_set);
+        $limit_offset_part = self::_getLimitOffsetPart(0, $limit);
 
-        $query = "DELETE " . $from_where_part['part'];
+
+        $query = "DELETE " . $from_where_part['part'] . ' ' . $limit_offset_part;
 
         return [
               'query' => $query,

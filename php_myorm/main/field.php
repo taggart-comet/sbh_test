@@ -10,30 +10,27 @@ use PhpMyOrm\sql\Utils;
  * as for use in a query
  * also to use after fetching the data from db
  */
-class Field
+abstract class Field
 {
+
+    public string $description;
+    public int    $max_length;
+    public bool   $is_primary_key = false;
+    public bool   $auto_increment = false;
+    public bool   $unsigned       = true;
 
     public function __construct(
           $is_primary_key = false,
-          $default = null,
           $description = '',
-          $max_length = 1,
+          $max_length = 0,
           $auto_increment = false
     ) {
 
-        $this->default        = $default;
         $this->description    = $description;
         $this->is_primary_key = $is_primary_key;
         $this->max_length     = $max_length;
         $this->auto_increment = $auto_increment;
     }
-
-    public $default        = null;
-    public $description;
-    public $max_length;
-    public $is_primary_key = false;
-    public $auto_increment = false;
-    public $unsigned       = true;
 
     // should be overridden by children
     public function isCorrectType($value)
@@ -80,11 +77,12 @@ class Field
 
 }
 
-class CharField extends Field
+final class CharField extends Field
 {
 
-    public $encoding = 'utf8';
-    public $collate  = 'utf8_general_ci';
+    public string $default  = '';
+    public string $encoding = 'utf8';
+    public string $collate  = 'utf8_general_ci';
 
     public function __construct(
           $max_length,
@@ -97,8 +95,9 @@ class CharField extends Field
 
         $this->encoding = $encoding;
         $this->collate  = $collate;
+        $this->default  = $default;
 
-        parent::__construct($is_primary_key, $default, $description, $max_length);
+        parent::__construct($is_primary_key, $description, $max_length);
     }
 
     public function isCorrectType($value)
@@ -159,7 +158,7 @@ class CharField extends Field
 class IntField extends Field
 {
 
-    public $default = 0;
+    public int $default = 0;
 
     public function __construct(
           $is_primary_key = false,
@@ -170,8 +169,9 @@ class IntField extends Field
     ) {
 
         $this->unsigned = $unsigned;
+        $this->default  = $default;
 
-        parent::__construct($is_primary_key, $default, $description, 11, $auto_increment);
+        parent::__construct($is_primary_key, $description, 11, $auto_increment);
     }
 
     public function isCorrectType($value)
@@ -240,71 +240,24 @@ class IntField extends Field
     }
 }
 
-class TinyIntField extends Field
+final class TinyIntField extends IntField
 {
 
-    public $default = 0;
+    public int $max_length = 1;
 
     public function __construct($is_primary_key = false, $default = 0, $description = '', $max_length = 1)
     {
 
-        parent::__construct($is_primary_key, $default, $description, $max_length, false);
-    }
+        $this->max_length = $max_length;
 
-    public function isCorrectType($value)
-    {
-
-        if (gettype($value) != 'integer') {
-            return false;
-        }
-
-        # max length
-        if (strlen($value) > $this->max_length) {
-            return false;
-        }
-        return true;
-    }
-
-    public function prepareValue($value)
-    {
-
-        // for `key + 1` to go through
-        if (preg_match("/^.*\s([\+,\-])\s(\d*)$/", $value)) {
-            return $value;
-        }
-
-        return intval($value);
-    }
-
-    public function prepareValueForUse($value)
-    {
-
-        return (int)$value;
-    }
-
-    public function getSqlType():string
-    {
-
-        return "tinyint({$this->max_length})";
-    }
-
-    public function getCreateStatement():string
-    {
-
-        return "TINYINT({$this->max_length})  NULL  DEFAULT '{$this->default}' COMMENT '{$this->description}'";
-    }
-
-    public function getPhpDocType():string
-    {
-
-        return 'int';
+        parent::__construct($is_primary_key, false, $default, $description, false);
     }
 }
 
-class BigIntField extends Field
+class BigIntField extends IntField
 {
 
-    public $default = 0;
+    public int $max_length = 20;
 
     public function __construct(
           $max_length = 20,
@@ -315,83 +268,24 @@ class BigIntField extends Field
           $unsigned = true
     ) {
 
-        $this->unsigned = $unsigned;
+        $this->max_length = $max_length;
 
-        parent::__construct($is_primary_key, $default, $description, $max_length, $auto_increment);
-    }
-
-    public function isCorrectType($value)
-    {
-
-        if (!is_numeric($value)) {
-            return false;
-        }
-
-        # max length
-        if (strlen($value) > $this->max_length) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function prepareValue($value)
-    {
-
-        // for `key + 1` to go through
-        if (preg_match("/^.*\s([\+,\-])\s(\d*)$/", $value)) {
-            return $value;
-        }
-
-        return (string) $value;
-    }
-
-    public function prepareValueForUse($value)
-    {
-
-        return (int)$value;
-    }
-
-    public function getSqlType():string
-    {
-
-        $type = "bigint({$this->max_length})";
-
-        if ($this->unsigned) {
-            return $type . ' unsigned';
-        }
-
-        return $type;
-    }
-
-    public function getCreateStatement():string
-    {
-
-        $query = "BIGINT({$this->max_length}) " . (($this->unsigned) ? "UNSIGNED " : "");
-
-        $query .= " NOT NULL";
-
-        if ($this->auto_increment) {
-            $query .= " AUTO_INCREMENT";
-        }
-
-        $query .= " COMMENT '{$this->description}'";
-
-        return $query;
-    }
-
-    public function getPhpDocType():string
-    {
-
-        return 'int';
+        parent::__construct(
+              $is_primary_key,
+              $auto_increment,
+              $default,
+              $description,
+              $unsigned,
+        );
     }
 }
 
 class TextFieldField extends Field
 {
 
-    public $encoding = 'utf8';
-    public $collate  = 'utf8_general_ci';
+    public string $default  = '';
+    public string $encoding = 'utf8';
+    public string $collate  = 'utf8_general_ci';
 
     public function __construct($description = '', $encoding = 'utf8', $collate = 'utf8_general_ci')
     {
@@ -399,7 +293,7 @@ class TextFieldField extends Field
         $this->encoding = $encoding;
         $this->collate  = $collate;
 
-        parent::__construct(false, '', $description, null, false);
+        parent::__construct(false, $description);
     }
 
     public function isCorrectType($value)
@@ -450,10 +344,12 @@ class TextFieldField extends Field
 class JSONField extends Field
 {
 
+    public string $default  = '';
+
     public function __construct($description = '')
     {
 
-        parent::__construct(false, [], $description, null, false);
+        parent::__construct(false, $description);
     }
 
     public function isCorrectType($value)
@@ -506,44 +402,3 @@ class JSONField extends Field
     }
 }
 
-class BinaryField extends Field
-{
-
-    public function __construct($max_length, $default = '', $description = '')
-    {
-
-        parent::__construct(false, $default, $description, $max_length, false);
-    }
-
-    public function isCorrectType($value)
-    {
-
-        if (gettype($value) != 'resource') {
-            return false;
-        }
-
-        # max length
-        if (count($value) > $this->max_length) {
-            return false;
-        }
-        return true;
-    }
-
-    public function getSqlType():string
-    {
-
-        return "binary({$this->max_length})";
-    }
-
-    public function getCreateStatement():string
-    {
-
-        return "BINARY({$this->max_length}) NULL DEFAULT '{$this->default}' COMMENT '{$this->description}'";
-    }
-
-    public function getPhpDocType():string
-    {
-
-        return 'resource';
-    }
-}

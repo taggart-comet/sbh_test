@@ -379,6 +379,15 @@ class SqlManager
         return $result;
     }
 
+    public function getTableStatus():array
+    {
+
+        $result = MysqlAdapter::init($this->_empty_model_instance->db_name)
+              ->getMany("SHOW TABLE STATUS LIKE `{$this->_empty_model_instance->table_name}`;", []);
+
+        return $result;
+    }
+
     //
     protected function _isFieldLegit(string $field_name)
     {

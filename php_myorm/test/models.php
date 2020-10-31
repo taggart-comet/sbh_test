@@ -17,8 +17,8 @@ require_once __DIR__ . '/../init.php';
 class TestModel extends db\Model
 {
 
-    public $table_name  = 'php_myorm_test_table';
-    public $description = 'This table is for tests';
+    public string $table_name  = 'php_myorm_test_table';
+    public string $description = 'This table is for tests';
 
     public function fields()
     {
@@ -52,9 +52,9 @@ class TestModel extends db\Model
 class TestModelAuto extends db\Model
 {
 
-    public $table_name  = 'php_myorm_test_table_auto';
-    public $db_name     = 'default_2';
-    public $description = 'This table is for tests. With autoincrement field';
+    public string $table_name  = 'php_myorm_test_table_auto';
+    public string $db_name     = 'default_2';
+    public string $description = 'This table is for tests. With autoincrement field';
 
     public function fields()
     {
@@ -88,8 +88,8 @@ class TestModelAuto extends db\Model
 class TestModelMultiPrimary extends db\Model
 {
 
-    public $table_name  = 'php_myorm_test_table_multi';
-    public $description = 'This table is for tests, with multiple primary keys';
+    public string $table_name  = 'php_myorm_test_table_multi';
+    public string $description = 'This table is for tests, with multiple primary keys';
 
     public function fields()
     {

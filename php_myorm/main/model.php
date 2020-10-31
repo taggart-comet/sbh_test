@@ -10,18 +10,18 @@ use PhpMyOrm\sql\Utils;
 /**
  * Main interface class, that gets implemented by model classes
  */
-class Model
+abstract class Model
 {
 
     // -------------------------------------------------------
     // CUSTOMIZABLE
     // -------------------------------------------------------
 
-    public $table_name  = null;
-    public $db_name     = 'default';
-    public $description = '';
-    public $charset     = 'utf8';
-    public $engine      = 'InnoDB';
+    public string $table_name;
+    public string $db_name    = 'default';
+    public string $description = '';
+    public string $charset     = 'utf8';
+    public string $engine      = 'InnoDB';
 
     /**
      * @return Field[]

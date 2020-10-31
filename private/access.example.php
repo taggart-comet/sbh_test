@@ -16,3 +16,10 @@ define("MYSQL_MAIN_SSL", false);
 define('REDIS_HOST', '127.0.0.1');
 define('REDIS_PASSWORD', '');
 
+// RABBIT BUS
+define('RABBIT_BUS_HOST'                  , '127.0.0.1');
+define('RABBIT_BUS_PORT'                  , '5672');
+define('RABBIT_BUS_USER'                  , 'guest');
+define('RABBIT_BUS_PASS'                  , 'guest');
+define('RABBIT_BUS_QUEUE_NAME'                  , 'rabbit_bus_queue');
+

@@ -35,7 +35,7 @@ class Handler
 
     const API_PREFIX      = '/api/v1/';
     const ALLOW_RESOURCES = [
-          'article'
+          'article',
     ];
 
     //
@@ -63,7 +63,7 @@ class Handler
         $response = $response->withBody($sf->createStream(json_encode($response_body)));
 
         // добавляем http-code and returning
-        return $response->withStatus(isset($response_body['error_code']) ? $response_body['error_code'] : 200);
+        return $response->withStatus($response_body['status_code']);
     }
 
     // ставит cookies, http-code, и echos ответ клиенту
@@ -89,22 +89,23 @@ class Handler
     // OK/Error
     // -------------------------------------------------------
 
-    public static function ok(array $response_array = []):array
+    public static function ok(array $response_array = [], int $status_code = 200):array
     {
 
         return [
-              'status'   => 'ok',
-              'response' => $response_array,
+              'status'      => 'ok',
+              'response'    => $response_array,
+              'status_code' => $status_code,
         ];
     }
 
-    public static function error(int $error_code, string $message = '')
+    public static function error(int $error_code = 405, string $message = '')
     {
 
         return [
-              'status'     => 'error',
-              'error_code' => $error_code,
-              'message'    => $message,
+              'status'      => 'error',
+              'status_code' => $error_code,
+              'message'     => $message,
         ];
     }
 

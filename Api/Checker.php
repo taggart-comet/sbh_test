@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Ttask\Application\Exception\GeneralException;
 use Zend\Diactoros\Request;
 
 /**
@@ -41,6 +42,8 @@ class Checker
         try {
 
             $result = call_user_func($class_name . '::' . $function_name, $request_data);
+        } catch (GeneralException $e) {
+            return Handler::error($e->getCode(), $e->getMessage());
         } catch (\InvalidArgumentException $e) {
             return Handler::error(405, "Invalid params");
         }

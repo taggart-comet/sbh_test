@@ -14,17 +14,14 @@ use PhpMyOrm\Model;
 class MigrateMain
 {
 
-    /** @var string */
-    protected $_model_class;
-
-    /** @var Model $_model_instance */
-    protected $_model_instance = null;
+    protected string $_model_class;
+    protected ?Model  $_model_instance = null;
 
     //
-    protected $_migrations = [];
+    protected array $_migrations = [];
 
     //
-    public $warnings = [];
+    public array $warnings = [];
 
     public function __construct($model_class)
     {
@@ -232,7 +229,7 @@ class MigrateMain
     protected function _getModelInstance():Model
     {
 
-        if ($this->_model_instance instanceof Model) {
+        if (!is_null($this->_model_instance)) {
             return $this->_model_instance;
         }
 

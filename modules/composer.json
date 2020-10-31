@@ -4,6 +4,8 @@
 	},
 	"require": {
 		"zendframework/zend-diactoros": "^2.2",
-		"psr/log": "^1.1",
+		"psr/log":                      "^1.1",
+		"php-amqplib/php-amqplib":      "2.6.*",
+		"ext-json":                     "*"
 	}
 }

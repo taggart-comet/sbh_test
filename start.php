@@ -66,21 +66,24 @@ spl_autoload_register(function ($class) {
     $prefix   = 'Api\\';
     $base_dir = __DIR__ . '/Api/';
 
-    # character length of our prefix
-    $len = strlen($prefix);
-
-    # if the first {$len} characters don't match
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
+    // for Api\
+    if (strncmp($prefix, $class, strlen($prefix)) === 0) {
+        $class_name = str_replace($prefix, '', $class);
+        return includeClass($class_name, $base_dir);
     }
 
-    $class_name = str_replace($prefix, '', $class);
-    $file       = $base_dir . str_replace('\\', '/', $class_name) . '.php';
-
-    # require the file if it exists
-    if (file_exists($file)) {
-
-        include_once $file;
-    }
+    // for src/
+    includeClass($class, __DIR__ . '/src/');
 });
+
+function includeClass(string $class_name, string $base_dir)
+{
+
+    $file = $base_dir . str_replace('\\', '/', $class_name) . '.php';
+    if (!file_exists($file)) {
+        return false;
+    }
+    include_once $file;
+    return true;
+}
 

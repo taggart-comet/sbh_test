@@ -24,6 +24,15 @@ class SendEmailEventService implements EventServiceInterface
     protected DomainEvent $event;
     protected int       $send_to_user_id;
 
+    /**
+     * @param DomainEvent $event
+     *
+     *                          Думаю сама реализация здесь не принципиальна
+     *                          Поэтому пишу так базово, чтобы можно было
+     *                          запустить понять что отработает
+     *
+     * @throws InvalidEventServiceUsage
+     */
     public function work(DomainEvent $event):void
     {
         $this->_init($event);

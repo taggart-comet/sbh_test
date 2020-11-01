@@ -22,11 +22,23 @@ ini_set('error_reporting', (string)E_ALL);
 define('PATH_ROOT', dirname(__FILE__) . '/');
 define('PATH_LOGS', dirname(__FILE__) . '/logs/');
 
-// db/rabbit/etc access constants
-require_once PATH_ROOT . "private/access.php";
+// -------------------------------------------------------
+// Access / Control (db/rabbit/etc access constants) / (feature switches/etc)
+// -------------------------------------------------------
 
-// feature switches/etc
-require_once PATH_ROOT . "private/control.php";
+// if file was not created - use default (works for docker)
+$access = PATH_ROOT . "private/access.php";
+if (!file_exists($access)) {
+    $access = PATH_ROOT . "private/access.example.php";
+}
+require_once $access;
+
+// if file was not created - use default (works for docker)
+$control = PATH_ROOT . "private/control.php";
+if (!file_exists($control)) {
+    $control = PATH_ROOT . "private/control.example.php";
+}
+require_once $control;
 
 // -------------------------------------------
 // PHP SYSTEM OPTION

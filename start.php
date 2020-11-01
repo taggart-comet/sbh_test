@@ -4,9 +4,6 @@
 // Инклудим, устанавливаем настройки
 // ----
 
-//
-declare(strict_types = 1);
-
 // locale
 date_default_timezone_set('Europe/Moscow');
 setlocale(LC_ALL, 'en_US.utf8');

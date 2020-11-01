@@ -1,2 +1,0 @@
-
-CREATE DATABASE `sbh_test_blog` DEFAULT CHARACTER SET = `utf8`;

@@ -45,6 +45,18 @@ class MigrateManager
             return;
         }
 
+        // silently when we need only to create tables
+        if (count($args) == 1 && isset($args[1]) && $args[1] == '--create-tables') {
+
+            foreach ($args as $model_class) {
+                if (in_array($model_class, $this->enabled_models)) {
+                    $this->checkModel($model_class, true);
+                }
+            }
+            return;
+        }
+
+        // overall check
         foreach ($args as $model_class) {
 
             if (in_array($model_class, $this->enabled_models)) {
@@ -55,7 +67,7 @@ class MigrateManager
         }
     }
 
-    protected function checkModel($model_class)
+    protected function checkModel($model_class, $only_create = false)
     {
 
         // checking first that paths to model classes typed correctly in the config
@@ -69,9 +81,21 @@ class MigrateManager
 
         $migrate = new MigrateMain($model_class);
 
+        // only creating silently
+        if ($only_create) {
+            try {
+                $migrate->check();;
+            } catch (NeedToCreateTableException $e) {
+                $migrate->createTable();
+            } catch (NeedToMigrateException $e) {
+
+            }
+            return;
+        }
+
         // checking if the table exists
         try {
-            $migrate->check($model_class);
+            $migrate->check();
         } catch (NeedToCreateTableException $e) {
             self::_log("Creating table for class `{$model_class}`");
             $migrate->createTable();

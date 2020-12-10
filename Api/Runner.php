@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Api\Di\ContainerFactory;
 use Zend\Diactoros\Request;
 
 /**
@@ -10,8 +11,8 @@ use Zend\Diactoros\Request;
  *   Finds the right endpoint for the request
  *   and runs them via Checker
  */
-
-class Runner {
+class Runner
+{
 
     // finds the right endpoint for the request
     public static function work(string $resource, array $endpoint_list, Request $request):array
@@ -27,16 +28,21 @@ class Runner {
             return Handler::error(405, 'Invalid resource requested');
         }
 
+        // initiating our controller service via DI
+        // with all the dependencies
+        $di_container = ContainerFactory::create(); // I don't know yet how to instantiate DI container correctly so let it be this way for now
+        $class        = $di_container->get($resource);
+
         // checking on `getAll`
         if (count($endpoint_list) < 1) {
 
             // now checking if the resource can be fetched all
-            if (!in_array(Handler::RESOURCE_ALL, $resource_class::ALLOWED_REQUESTS)) {
+            if (!in_array(Handler::RESOURCE_ALL, $class::ALLOWED_REQUESTS)) {
                 return Handler::error(405, 'Invalid way of accessing resources');
             }
 
             // executing `getAll` it's an agreed name
-            return Checker::work($resource_class, 'getAll', $request);
+            return Checker::work($class, 'getAll', $request);
         }
 
         // if second part is action
@@ -45,12 +51,12 @@ class Runner {
             $action = self::_transformToMethodName($endpoint_list[0]);
 
             // now checking if the resource can be fetched all
-            if (!isset($resource_class::ALLOWED_ACTIONS[$action])) {
+            if (!isset($class::ALLOWED_ACTIONS[$action])) {
                 return Handler::error(405, 'Invalid request action');
             }
 
             // executing action
-            return Checker::work($resource_class, $action, $request);
+            return Checker::work($class, $action, $request);
         }
 
         // working with action on by resource id
@@ -59,8 +65,8 @@ class Runner {
 
             $action = self::_transformToMethodName($endpoint_list[1]);
 
-            if (isset($resource_class::ALLOWED_ID_ACTIONS[$action])) {
-                return Checker::work($resource_class, $action, $request, $endpoint_list[0]);
+            if (isset($class::ALLOWED_ID_ACTIONS[$action])) {
+                return Checker::work($class, $action, $request, $endpoint_list[0]);
             }
         }
 
@@ -69,8 +75,8 @@ class Runner {
 
             $action = self::_transformToMethodName($endpoint_list[1]);
 
-            if (isset($resource_class::ALLOWED_ID_ACTIONS[$action])) {
-                return Checker::work($resource_class, $action, $request, $endpoint_list[0]);
+            if (isset($class::ALLOWED_ID_ACTIONS[$action])) {
+                return Checker::work($class, $action, $request, $endpoint_list[0]);
             }
         }
 

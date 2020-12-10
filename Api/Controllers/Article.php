@@ -7,12 +7,30 @@ use Api\Validator;
 use Ttask\Application\Article\ArticleListService;
 use Ttask\Application\Article\ArticleSaveDTO;
 use Ttask\Application\Article\ArticleSaveService;
+use Ttask\Domain\Repository\ArticleRepository;
+use Ttask\Domain\Repository\AuthorRepository;
+use Ttask\Domain\Events\EventBus;
 use Ttask\Infrastructure\Bus\RabbitMqEventBus;
 use Ttask\Infrastructure\Persistence\MysqlArticleRepository;
 use Ttask\Infrastructure\Persistence\MysqlAuthorRepository;
 
-class Article extends ControllerInterface
+class Article extends AbstractController
 {
+
+    protected ArticleRepository $article_repository;
+    protected AuthorRepository  $author_repository;
+
+    public function __construct(
+          EventBus $event_bus,
+          ArticleRepository $article_repository,
+          AuthorRepository $author_repository
+    ) {
+
+        $this->article_repository = $article_repository;
+        $this->author_repository  = $author_repository;
+
+        parent::__construct($event_bus);
+    }
 
     public const ALLOWED_REQUESTS = [
           Handler::RESOURCE_ID_INT,
@@ -25,7 +43,7 @@ class Article extends ControllerInterface
     ];
 
     public const ALLOWED_ID_ACTIONS = [
-//          'get' => Handler::METHOD_GET,
+        //          'get' => Handler::METHOD_GET,
     ];
 
     // -------------------------------------------------------
@@ -33,20 +51,19 @@ class Article extends ControllerInterface
     // -------------------------------------------------------
 
     //
-    public static function save(array $request_data):array
+    public function save(array $request_data):array
     {
 
         $title       = Validator::string($request_data, 'title');
         $text        = Validator::string($request_data, 'text');
         $author_name = Validator::string($request_data, 'author_name');
 
-        // NOTE: то что мы здесь вот так создаем service с созданием репозиториев и Bus-ов по сути в каждом
-        // NOTE: контроллере не хорошо, конечно стоило сделать через какой-то ControllerParentClass + ServiceBus
+        //
         $service = new ArticleSaveService(
               new ArticleSaveDTO($title, $text, $author_name),
-              new MysqlArticleRepository(),
-              new MysqlAuthorRepository(),
-              new RabbitMqEventBus()
+              $this->article_repository,
+              $this->author_repository,
+              $this->event_bus
         );
         $service->work();
 
@@ -54,20 +71,20 @@ class Article extends ControllerInterface
     }
 
     //
-    public static function list(array $request_data)
+    public function list(array $request_data)
     {
 
-        $limit       = Validator::int($request_data, 'limit', false);
-        $offset      = Validator::int($request_data, 'offset', false);
+        $limit  = Validator::int($request_data, 'limit', false);
+        $offset = Validator::int($request_data, 'offset', false);
 
         $service = new ArticleListService(
               $limit ?? 10,
               $offset ?? 0,
-              new MysqlArticleRepository()
+              $this->article_repository
         );
 
         return Handler::ok([
-              'list' => $service->work()
+              'list' => $service->work(),
         ]);
     }
 

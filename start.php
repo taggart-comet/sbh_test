@@ -44,7 +44,7 @@ require_once $control;
 // errors
 ini_set('log_errors', '1');
 ini_set('error_log', PATH_ROOT . "/logs/__php_error.log");
-ini_set('display_errors', '0');
+ini_set('display_errors', IS_DEV_SERVER ? '1' : '0');
 ini_set('error_reporting', (string)(E_ALL ^ E_DEPRECATED ^ E_STRICT));
 
 // options

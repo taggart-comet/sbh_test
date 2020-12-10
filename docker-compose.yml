@@ -25,6 +25,7 @@ services:
       retries: 10
     command: ["--default-authentication-plugin=mysql_native_password"]
 
+# for a production deployment, xdebug should be disabled here
   backend_php:
     build:
       context: .
@@ -34,6 +35,8 @@ services:
       - "9004:9004"
     volumes:
       - .:/app:delegated
+    environment:
+      XDEBUG_CONFIG: remote_host={{YOUR_IP_ADDRESS}}
     depends_on:
       - rabbitmq
       - mysql

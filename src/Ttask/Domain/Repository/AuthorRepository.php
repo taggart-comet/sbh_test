@@ -1,6 +1,6 @@
 <?php
 
-namespace Ttask\Domain;
+namespace Ttask\Domain\Repository;
 
 use Ttask\Domain\VOs\AuthorArticleCount;
 use Ttask\Domain\VOs\AuthorCreatedAt;

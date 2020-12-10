@@ -2,10 +2,19 @@
 
 namespace Api\Controllers;
 
+use Ttask\Domain\Events\EventBus;
+
 /**
  * Интерфейс для контроллеров, определяем константы
  */
-abstract class ControllerInterface {
+abstract class AbstractController {
+
+    protected EventBus $event_bus;
+
+    public function __construct(EventBus $event_bus)
+    {
+        $this->event_bus = $event_bus;
+    }
 
     /**
      * Типы реквестов к ресурсу

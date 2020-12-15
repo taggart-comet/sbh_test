@@ -30,7 +30,7 @@ class Runner
 
         // initiating our controller service via DI
         // with all the dependencies
-        $di_container = ContainerFactory::create(); // I don't know yet how to instantiate DI container correctly so let it be this way for now
+        $di_container = ContainerFactory::create();
         $class        = $di_container->get($resource);
 
         // checking on `getAll`

@@ -81,7 +81,7 @@ class Handler
         // status code
         http_response_code($response->getStatusCode());
 
-//        $special_error_for_test->off();
+        $special_error_for_test->off();
         // echo
         echo $response->getBody()->getContents();
     }

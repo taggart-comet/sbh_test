@@ -30,7 +30,7 @@ class Runner
 
         // initiating our controller service via DI
         // with all the dependencies
-        $di_container = ContainerFactory::create();
+        $di_container = ContainerFactory::create(ContainerFactory::CONTAINER_TYPE_SYMFONY);
         $class        = $di_container->get($resource);
 
         // checking on `getAll`

@@ -6,7 +6,7 @@ use PhpMyOrm\sql\DoesNotExist;
 use Ttask\Application\Exception\Author\AuthorNotFound;
 use Ttask\Domain\Author;
 use Ttask\Domain\AuthorFactory;
-use Ttask\Domain\AuthorRepository;
+use Ttask\Domain\Repository\AuthorRepository;
 use Ttask\Domain\VOs\AuthorArticleCount;
 use Ttask\Domain\VOs\AuthorCreatedAt;
 use Ttask\Domain\VOs\AuthorId;

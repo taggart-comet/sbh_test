@@ -3,7 +3,7 @@
 namespace Ttask\Application\Article;
 
 use Ttask\Application\ServiceInterface;
-use Ttask\Domain\ArticleRepository;
+use Ttask\Domain\Repository\ArticleRepository;
 
 final class ArticleListService implements ServiceInterface
 {

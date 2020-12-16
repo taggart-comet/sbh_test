@@ -8,7 +8,7 @@ use Ttask\Application\Exception\Article\ArticleNotFound;
 use Ttask\Domain\Article;
 use Ttask\Domain\ArticleFactory;
 use Ttask\Domain\VOs\ArticleId;
-use Ttask\Domain\ArticleRepository;
+use Ttask\Domain\Repository\ArticleRepository;
 use Ttask\Infrastructure\Persistence\PhpMyOrm\ArticleMain;
 
 /**

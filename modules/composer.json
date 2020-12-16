@@ -8,6 +8,7 @@
 		"php-amqplib/php-amqplib":      "2.6.*",
 		"ext-json":                     "*",
 		"ext-bcmath":                   "*",
-		"psr/container": "^1.0"
+		"psr/container": "^1.0",
+		"symfony/dependency-injection": "^5.2"
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace Ttask\Domain\Repository;
 
+use Ttask\Domain\Article;
 use Ttask\Domain\VOs\ArticleId;
 
 interface ArticleRepository {

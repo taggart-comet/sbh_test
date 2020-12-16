@@ -2,6 +2,7 @@
 
 namespace Ttask\Domain\Repository;
 
+use Ttask\Domain\Author;
 use Ttask\Domain\VOs\AuthorArticleCount;
 use Ttask\Domain\VOs\AuthorCreatedAt;
 use Ttask\Domain\VOs\AuthorId;
